@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}My Bids - AuctionPlatform{% endblock %}
+{% block content %}
+<div style="padding:2rem;">
+  <h2>💰 My Bids</h2>
+  <div class="table-container" style="margin-top:1.5rem;">
+    <table>
+      <thead>
+        <tr><th>Vehicle</th><th>My Bid</th><th>Current Highest Bid</th><th>Status</th><th>Date</th></tr>
+      </thead>
+      <tbody>
+        {% for bid in bids %}
+        <tr>
+          <td><a href="{% url 'auction_detail' bid.auction.pk %}" style="color:#007BFF;text-decoration:none;font-weight:bold;">{{ bid.auction.title }}</a></td>
+          <td style="color:#ff6600;font-weight:bold;">${{ bid.bid_amount|floatformat:2 }}</td>
+          <td>${{ bid.auction.current_bid|floatformat:2 }}</td>
+          <td>
+            {% if bid.bid_amount == bid.auction.current_bid %}
+              <span class="badge" style="background:#d4edda;color:#155724;">🏆 Leading</span>
+            {% else %}
+              <span class="badge" style="background:#f8d7da;color:#721c24;">📉 Outbid</span>
+            {% endif %}
+          </td>
+          <td style="color:#888;">{{ bid.created_at|date:"M j, Y g:i a" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" style="text-align:center;padding:2rem;color:#888;">You haven't placed any bids yet. <a href="{% url 'search' %}">Browse auctions!</a></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

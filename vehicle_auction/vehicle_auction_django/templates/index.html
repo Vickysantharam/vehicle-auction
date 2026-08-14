@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Vehicle Auction System - Find Your Dream Vehicle{% endblock %}
+{% block content %}
+
+<section id="hero">
+  <div class="hero-content">
+    <h1>Find Your Dream Vehicle</h1>
+    <p>Bid on the best vehicles from the comfort of your home</p>
+    <form id="search-form" method="GET" action="{% url 'search' %}">
+      <input type="text" name="query" placeholder="Search for vehicles...">
+      <button type="submit">🔍 Search</button>
+    </form>
+  </div>
+</section>
+
+<div class="post-auction-container">
+  {% if user.is_authenticated %}
+    <a href="{% url 'post_auction' %}" class="post-auction-btn">➕ Post Auction</a>
+  {% else %}
+    <a href="{% url 'login' %}" class="post-auction-btn">➕ Post Auction</a>
+  {% endif %}
+</div>
+
+<section id="featured-auctions">
+  <h2>⭐ Featured Auctions</h2>
+  <div class="carousel">
+    {% for auction in featured %}
+    <a href="{% url 'auction_detail' auction.pk %}" class="auction-item">
+      {% if auction.image %}
+        <img src="{{ auction.image.url }}" alt="{{ auction.title }}">
+      {% elif auction.image_url %}
+        <img src="/media/static_images/{{ auction.image_url|cut:'images/' }}" alt="{{ auction.title }}">
+      {% else %}
+        <img src="{% static 'css/placeholder.jpg' %}" alt="{{ auction.title }}">
+      {% endif %}
+      <h3>{{ auction.title }}</h3>
+      <span class="bid-label">Current Bid</span>
+      <div class="bid-price">${{ auction.current_bid|floatformat:0 }}</div>
+      <span class="bid-btn">Place Bid →</span>
+    </a>
+    {% empty %}
+    <p style="text-align:center;color:#888;padding:2rem;">No featured auctions yet.</p>
+    {% endfor %}
+  </div>
+</section>
+
+<section id="how-it-works">
+  <h2>How It Works</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-icon">📝</div>
+      <h3>Step 1</h3>
+      <p>Register a free account</p>
+    </div>
+    <div class="step">
+      <div class="step-icon">🔍</div>
+      <h3>Step 2</h3>
+      <p>Browse vehicle auctions</p>
+    </div>
+    <div class="step">
+      <div class="step-icon">💰</div>
+      <h3>Step 3</h3>
+      <p>Place your best bid</p>
+    </div>
+    <div class="step">
+      <div class="step-icon">🏆</div>
+      <h3>Step 4</h3>
+      <p>Win & collect your vehicle</p>
+    </div>
+  </div>
+</section>
+
+<section id="testimonials">
+  <h2>What Our Users Say</h2>
+  <div class="testimonials-container">
+    <div class="testimonial">
+      <p>"Great experience! I found my dream car at a great price."</p>
+      <h4>- John Doe</h4>
+    </div>
+    <div class="testimonial">
+      <p>"Easy to use and excellent customer service. Highly recommended!"</p>
+      <h4>- Jane Smith</h4>
+    </div>
+    <div class="testimonial">
+      <p>"The bidding process is super smooth. Got my BMW at an amazing deal!"</p>
+      <h4>- Mike Johnson</h4>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

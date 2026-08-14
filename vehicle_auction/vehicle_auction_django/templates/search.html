@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block title %}Search Auctions - AuctionPlatform{% endblock %}
+{% block content %}
+<section id="search-results" style="padding:2rem;">
+  <div style="text-align:center;margin-bottom:2rem;">
+    <h2>🔍 Search Auctions</h2>
+    <form id="search-form" method="GET" action="{% url 'search' %}">
+      <input type="text" name="query" value="{{ query }}" placeholder="Search vehicles..." style="padding:10px 16px;width:320px;border:2px solid #ddd;border-radius:25px;font-size:1rem;outline:none;">
+      <button type="submit" style="padding:10px 20px;background:#ff6600;color:#fff;border:none;border-radius:25px;cursor:pointer;font-size:1rem;">Search</button>
+    </form>
+    {% if query %}<p style="color:#888;margin-top:0.75rem;">Results for "<strong>{{ query }}</strong>" — {{ results.count }} found</p>{% endif %}
+  </div>
+  <div class="results">
+    {% for auction in results %}
+    <a href="{% url 'auction_detail' auction.pk %}" class="auction-item">
+      {% if auction.image %}
+        <img src="{{ auction.image.url }}" alt="{{ auction.title }}">
+      {% elif auction.image_url %}
+        <img src="/media/static_images/{{ auction.image_url|cut:'images/' }}" alt="{{ auction.title }}">
+      {% endif %}
+      <h3>{{ auction.title }}</h3>
+      <span class="bid-label">Current Bid</span>
+      <div class="bid-price">${{ auction.current_bid|floatformat:0 }}</div>
+      <span class="bid-btn">View & Bid →</span>
+    </a>
+    {% empty %}
+    <div style="text-align:center;padding:3rem;color:#888;width:100%;">
+      <div style="font-size:3rem;">🚗</div>
+      <p>No auctions found. <a href="{% url 'search' %}">Browse all auctions</a></p>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}My Auctions - AuctionPlatform{% endblock %}
+{% block content %}
+<div style="padding:2rem;">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
+    <h2>📋 My Auctions</h2>
+    <a href="{% url 'post_auction' %}" style="padding:10px 20px;background:#28a745;color:#fff;text-decoration:none;border-radius:8px;font-weight:bold;">➕ Post New Auction</a>
+  </div>
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr><th>Vehicle</th><th>Current Bid</th><th>Featured</th><th>Date Posted</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        {% for auction in auctions %}
+        <tr>
+          <td>
+            <div style="display:flex;align-items:center;gap:0.75rem;">
+              {% if auction.image %}
+                <img src="{{ auction.image.url }}" style="width:50px;height:40px;object-fit:cover;border-radius:5px;">
+              {% elif auction.image_url %}
+                <img src="/media/static_images/{{ auction.image_url|cut:'images/' }}" style="width:50px;height:40px;object-fit:cover;border-radius:5px;">
+              {% endif %}
+              <strong>{{ auction.title }}</strong>
+            </div>
+          </td>
+          <td style="color:#ff6600;font-weight:bold;">${{ auction.current_bid|floatformat:2 }}</td>
+          <td>{% if auction.featured %}<span class="badge badge-featured">⭐ Yes</span>{% else %}-{% endif %}</td>
+          <td style="color:#888;">{{ auction.created_at|date:"M j, Y" }}</td>
+          <td>
+            <a href="{% url 'auction_detail' auction.pk %}" class="btn-primary" style="padding:6px 12px;background:#007BFF;color:#fff;text-decoration:none;border-radius:5px;font-size:0.85rem;margin-right:0.5rem;">View</a>
+            <a href="{% url 'delete_auction' auction.pk %}" class="btn-danger" style="padding:6px 12px;background:#dc3545;color:#fff;text-decoration:none;border-radius:5px;font-size:0.85rem;" onclick="return confirm('Delete this auction?')">Delete</a>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" style="text-align:center;padding:2rem;color:#888;">You haven't posted any auctions yet. <a href="{% url 'post_auction' %}">Post one now!</a></td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

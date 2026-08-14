@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}Contact Us - AuctionPlatform{% endblock %}
+{% block content %}
+<div class="page-hero">
+  <h1>Contact Us</h1>
+  <p>We'd love to hear from you</p>
+</div>
+<div style="padding:2rem;">
+  <div class="content-box">
+    <div style="display:flex;gap:3rem;flex-wrap:wrap;">
+      <div style="flex:1;min-width:280px;">
+        <h2>Get In Touch</h2>
+        <form method="POST" action="{% url 'contact' %}">
+          {% csrf_token %}
+          <div class="form-group">
+            <label>Your Name</label>
+            <input type="text" name="name" placeholder="John Doe" required>
+          </div>
+          <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" name="email" placeholder="john@example.com" required>
+          </div>
+          <div class="form-group">
+            <label>Message</label>
+            <textarea name="message" rows="5" placeholder="How can we help?" required style="width:100%;padding:10px 14px;border:2px solid #ddd;border-radius:8px;font-size:1rem;outline:none;resize:vertical;"></textarea>
+          </div>
+          <button type="submit" class="submit-btn">📨 Send Message</button>
+        </form>
+      </div>
+      <div style="flex:1;min-width:200px;">
+        <h2>Contact Info</h2>
+        <div style="margin-bottom:1.5rem;">
+          <div style="font-size:1.5rem;margin-bottom:0.5rem;">📍</div>
+          <strong>Address</strong>
+          <p style="color:#666;margin:0.25rem 0 0;">123 Auction Street, Vehicle City, VC 10001</p>
+        </div>
+        <div style="margin-bottom:1.5rem;">
+          <div style="font-size:1.5rem;margin-bottom:0.5rem;">📧</div>
+          <strong>Email</strong>
+          <p style="color:#666;margin:0.25rem 0 0;">support@auctionplatform.com</p>
+        </div>
+        <div style="margin-bottom:1.5rem;">
+          <div style="font-size:1.5rem;margin-bottom:0.5rem;">📞</div>
+          <strong>Phone</strong>
+          <p style="color:#666;margin:0.25rem 0 0;">+1 (555) 123-4567</p>
+        </div>
+        <div>
+          <div style="font-size:1.5rem;margin-bottom:0.5rem;">🕒</div>
+          <strong>Hours</strong>
+          <p style="color:#666;margin:0.25rem 0 0;">Mon–Fri: 9am–6pm</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

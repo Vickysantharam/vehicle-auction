@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Post Auction - AuctionPlatform{% endblock %}
+{% block content %}
+<div style="padding:2rem;">
+  <div class="form-container" style="max-width:650px;">
+    <h1>🚗 Post Your Auction</h1>
+    <form id="post-auction-form" method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="form-group">
+        <label>Vehicle Title</label>
+        <input type="text" name="title" placeholder="e.g. 2022 Toyota Camry XSE" required>
+      </div>
+      <div class="form-group">
+        <label>Your Email</label>
+        <input type="email" name="email" value="{{ user.email }}" readonly style="background:#f0f0f0;">
+      </div>
+      <div class="form-group">
+        <label>Starting Bid (USD)</label>
+        <input type="number" name="starting_bid" placeholder="e.g. 15000" min="1" required>
+      </div>
+      <div class="form-group">
+        <label>Vehicle Image</label>
+        <input type="file" id="image" name="image" accept="image/*" required>
+      </div>
+      <div class="form-group" style="display:flex;align-items:center;gap:0.75rem;">
+        <input type="checkbox" name="featured" id="featured" style="width:auto;">
+        <label for="featured" style="margin:0;">Mark as Featured Auction</label>
+      </div>
+      <div class="image-preview-container">
+        <img id="image-preview" src="#" alt="Preview">
+      </div>
+      <button type="submit" class="submit-btn" style="margin-top:1.5rem;">🚀 Post Auction</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

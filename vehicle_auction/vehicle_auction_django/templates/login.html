@@ -1,0 +1,58 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login / Register - AuctionPlatform</title>
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body class="login-page">
+  {% if messages %}
+  <div style="position:fixed;top:1rem;right:1rem;z-index:9999;">
+    {% for message in messages %}
+    <div class="notification {{ message.tags }}" style="margin-bottom:0.5rem;">{{ message }}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <div class="card-container">
+    <div class="card" id="card">
+      <!-- LOGIN FRONT -->
+      <div class="card-face card-front">
+        <h2>🔑 Login</h2>
+        <form method="POST" action="{% url 'login_submit' %}">
+          {% csrf_token %}
+          <input type="email" name="email" placeholder="Email Address" required>
+          <input type="password" name="password" placeholder="Password" required>
+          <button type="submit">Login</button>
+        </form>
+        <button class="switch-btn" onclick="openRegister()">Don't have an account? Sign Up</button>
+        <div style="text-align:center;margin-top:1rem;">
+          <a href="{% url 'index' %}" style="color:rgba(255,255,255,0.6);font-size:0.85rem;">← Back to Home</a>
+        </div>
+      </div>
+      <!-- REGISTER BACK -->
+      <div class="card-face card-back">
+        <h2>📝 Sign Up</h2>
+        <form method="POST" action="{% url 'register' %}" enctype="multipart/form-data">
+          {% csrf_token %}
+          <input type="text" name="username" placeholder="Full Name" required>
+          <input type="email" name="email" placeholder="Email Address" required>
+          <input type="text" name="mnumber" placeholder="Phone Number" required>
+          <input type="file" name="profilepic" accept="image/*" style="color:#fff;padding:8px 0;">
+          <input type="password" name="password" placeholder="Password" required>
+          <button type="submit">Create Account</button>
+        </form>
+        <button class="switch-btn" onclick="openLogin()">Already have an account? Login</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="{% static 'js/main.js' %}"></script>
+  <script>
+    // Auto-show register if redirected with signup param
+    if (window.location.hash === '#register') openRegister();
+  </script>
+</body>
+</html>

@@ -1,0 +1,187 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - AuctionPlatform</title>
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body style="background:#f0f2f5;">
+
+<div class="admin-sidebar">
+  <span class="brand">🚗 AuctionPanel</span>
+  <a href="{% url 'admin_dashboard' %}" class="active">📊 Dashboard</a>
+  <a href="{% url 'index' %}">🌐 View Site</a>
+  <a href="{% url 'admin_logout' %}" style="color:#ff6b6b;">🚪 Logout</a>
+</div>
+
+<div class="admin-content">
+  <div class="admin-header">
+    <h1>Admin Dashboard</h1>
+    <div style="color:#888;font-size:0.9rem;">Welcome, Administrator</div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row" style="padding:0;margin-bottom:2rem;">
+    <div class="stat-card">
+      <div class="stat-number">{{ auctions.count }}</div>
+      <div class="stat-label">Total Auctions</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">{{ users.count }}</div>
+      <div class="stat-label">Registered Users</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">{{ bids.count }}</div>
+      <div class="stat-label">Total Bids</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">{{ contacts.count }}</div>
+      <div class="stat-label">Contact Messages</div>
+    </div>
+  </div>
+
+  {% csrf_token %}
+
+  <!-- Tabs -->
+  <div style="display:flex;gap:0.75rem;margin-bottom:1.5rem;flex-wrap:wrap;">
+    <button class="tab-btn active" data-tab="tab-auctions">🚗 Auctions</button>
+    <button class="tab-btn" data-tab="tab-users">👥 Users</button>
+    <button class="tab-btn" data-tab="tab-bids">💰 Bids</button>
+    <button class="tab-btn" data-tab="tab-contacts">📧 Messages</button>
+  </div>
+
+  <!-- Auctions Tab -->
+  <div id="tab-auctions" class="tab-content active">
+    <h3 style="margin-bottom:1rem;">All Auctions</h3>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>ID</th><th>Title</th><th>Current Bid</th><th>Featured</th><th>Posted By</th><th>Date</th><th>Actions</th></tr></thead>
+        <tbody>
+          {% for auction in auctions %}
+          <tr id="auction-row-{{ auction.pk }}">
+            <td>{{ auction.pk }}</td>
+            <td><strong>{{ auction.title }}</strong></td>
+            <td style="color:#ff6600;font-weight:bold;">${{ auction.current_bid|floatformat:2 }}</td>
+            <td>{% if auction.featured %}<span class="badge badge-featured">⭐ Yes</span>{% else %}<span style="color:#aaa;">No</span>{% endif %}</td>
+            <td style="color:#888;">{% if auction.created_by %}{{ auction.created_by.email }}{% else %}System{% endif %}</td>
+            <td style="color:#888;font-size:0.85rem;">{{ auction.created_at|date:"M j, Y" }}</td>
+            <td style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+              <button class="toggle-featured-btn btn-warning" data-id="{{ auction.pk }}">{% if auction.featured %}Unfeature{% else %}Feature{% endif %}</button>
+              <button class="delete-auction-btn btn-danger" data-id="{{ auction.pk }}">Delete</button>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Users Tab -->
+  <div id="tab-users" class="tab-content">
+    <h3 style="margin-bottom:1rem;">Registered Users</h3>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>ID</th><th>Username</th><th>Email</th><th>Phone</th><th>Joined</th><th>Actions</th></tr></thead>
+        <tbody>
+          {% for u in users %}
+          <tr id="user-row-{{ u.pk }}">
+            <td>{{ u.pk }}</td>
+            <td><strong>{{ u.username }}</strong></td>
+            <td>{{ u.email }}</td>
+            <td>{% if u.profile %}{{ u.profile.phone }}{% endif %}</td>
+            <td style="color:#888;font-size:0.85rem;">{{ u.date_joined|date:"M j, Y" }}</td>
+            <td><button class="delete-user-btn btn-danger" data-id="{{ u.pk }}">Delete</button></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Bids Tab -->
+  <div id="tab-bids" class="tab-content">
+    <h3 style="margin-bottom:1rem;">All Bids</h3>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>ID</th><th>Vehicle</th><th>Bidder</th><th>Amount</th><th>Date</th><th>Actions</th></tr></thead>
+        <tbody>
+          {% for bid in bids %}
+          <tr id="bid-row-{{ bid.pk }}">
+            <td>{{ bid.pk }}</td>
+            <td>{{ bid.auction.title }}</td>
+            <td>{{ bid.bidder.email }}</td>
+            <td style="color:#ff6600;font-weight:bold;">${{ bid.bid_amount|floatformat:2 }}</td>
+            <td style="color:#888;font-size:0.85rem;">{{ bid.created_at|date:"M j, Y g:i a" }}</td>
+            <td><button class="delete-bid-btn btn-danger" data-id="{{ bid.pk }}">Delete</button></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Contacts Tab -->
+  <div id="tab-contacts" class="tab-content">
+    <h3 style="margin-bottom:1rem;">Contact Messages</h3>
+    <div class="table-container">
+      <table>
+        <thead><tr><th>Name</th><th>Email</th><th>Message</th><th>Date</th></tr></thead>
+        <tbody>
+          {% for msg in contacts %}
+          <tr>
+            <td><strong>{{ msg.name }}</strong></td>
+            <td>{{ msg.email }}</td>
+            <td style="max-width:300px;word-wrap:break-word;">{{ msg.message|truncatechars:100 }}</td>
+            <td style="color:#888;font-size:0.85rem;">{{ msg.created_at|date:"M j, Y" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script src="{% static 'js/main.js' %}"></script>
+<script>
+// Fix delete rows referencing by row id
+document.querySelectorAll('.delete-auction-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    if (!confirm('Delete this auction?')) return;
+    const id = this.dataset.id;
+    fetch(`/admin-panel/delete-auction/${id}/`, {
+      method: 'POST',
+      headers: { 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value }
+    }).then(r => r.json()).then(d => {
+      if (d.success) { document.getElementById(`auction-row-${id}`).remove(); showNotification('Auction deleted'); }
+    });
+  });
+});
+document.querySelectorAll('.delete-user-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    if (!confirm('Delete this user?')) return;
+    const id = this.dataset.id;
+    fetch(`/admin-panel/delete-user/${id}/`, {
+      method: 'POST',
+      headers: { 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value }
+    }).then(r => r.json()).then(d => {
+      if (d.success) { document.getElementById(`user-row-${id}`).remove(); showNotification('User deleted'); }
+    });
+  });
+});
+document.querySelectorAll('.delete-bid-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    if (!confirm('Delete this bid?')) return;
+    const id = this.dataset.id;
+    fetch(`/admin-panel/delete-bid/${id}/`, {
+      method: 'POST',
+      headers: { 'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value }
+    }).then(r => r.json()).then(d => {
+      if (d.success) { document.getElementById(`bid-row-${id}`).remove(); showNotification('Bid deleted'); }
+    });
+  });
+});
+</script>
+</body>
+</html>

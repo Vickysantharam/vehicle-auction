@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Dashboard - AuctionPlatform{% endblock %}
+{% block content %}
+<div style="background:linear-gradient(135deg,#222,#444);color:#fff;padding:2rem;">
+  <h1>Welcome back, {{ user.username }}! 👋</h1>
+  <p style="color:#ccc;">Manage your auctions and bids from here.</p>
+</div>
+
+<div class="stats-row">
+  <div class="stat-card">
+    <div class="stat-number">{{ user.auctions.count }}</div>
+    <div class="stat-label">My Auctions</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-number">{{ user.bids.count }}</div>
+    <div class="stat-label">My Bids</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-number">{{ all_auctions.count }}</div>
+    <div class="stat-label">Total Auctions</div>
+  </div>
+</div>
+
+<div style="padding:1rem 2rem;display:flex;gap:1rem;flex-wrap:wrap;">
+  <a href="{% url 'post_auction' %}" style="padding:10px 20px;background:#28a745;color:#fff;text-decoration:none;border-radius:8px;font-weight:bold;">➕ Post Auction</a>
+  <a href="{% url 'user_auctions' %}" style="padding:10px 20px;background:#007BFF;color:#fff;text-decoration:none;border-radius:8px;font-weight:bold;">📋 My Auctions</a>
+  <a href="{% url 'user_bids' %}" style="padding:10px 20px;background:#ff6600;color:#fff;text-decoration:none;border-radius:8px;font-weight:bold;">💰 My Bids</a>
+  <a href="{% url 'user_profile' %}" style="padding:10px 20px;background:#6c757d;color:#fff;text-decoration:none;border-radius:8px;font-weight:bold;">👤 Profile</a>
+</div>
+
+<section style="padding:1rem 2rem 2rem;">
+  <h2>⭐ Featured Auctions</h2>
+  <div class="carousel">
+    {% for auction in featured %}
+    <a href="{% url 'auction_detail' auction.pk %}" class="auction-item">
+      {% if auction.image %}
+        <img src="{{ auction.image.url }}" alt="{{ auction.title }}">
+      {% elif auction.image_url %}
+        <img src="/media/static_images/{{ auction.image_url|cut:'images/' }}" alt="{{ auction.title }}">
+      {% endif %}
+      <h3>{{ auction.title }}</h3>
+      <span class="bid-label">Current Bid</span>
+      <div class="bid-price">${{ auction.current_bid|floatformat:0 }}</div>
+    </a>
+    {% endfor %}
+  </div>
+
+  <h2 style="margin-top:2rem;">🚗 All Active Auctions</h2>
+  <div class="results">
+    {% for auction in all_auctions %}
+    <a href="{% url 'auction_detail' auction.pk %}" class="auction-item">
+      {% if auction.image %}
+        <img src="{{ auction.image.url }}" alt="{{ auction.title }}">
+      {% elif auction.image_url %}
+        <img src="/media/static_images/{{ auction.image_url|cut:'images/' }}" alt="{{ auction.title }}">
+      {% endif %}
+      <h3>{{ auction.title }}</h3>
+      <span class="bid-label">Current Bid</span>
+      <div class="bid-price">${{ auction.current_bid|floatformat:0 }}</div>
+      <span class="bid-btn">View & Bid →</span>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

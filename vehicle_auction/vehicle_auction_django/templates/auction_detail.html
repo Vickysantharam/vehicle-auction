@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}{{ auction.title }} - AuctionPlatform{% endblock %}
+{% block content %}
+<div class="auction-detail-container" style="padding:2rem;">
+  <div class="auction-detail-card">
+    {% if auction.image %}
+      <img class="auction-detail-img" src="{{ auction.image.url }}" alt="{{ auction.title }}">
+    {% elif auction.image_url %}
+      <img class="auction-detail-img" src="/media/static_images/{{ auction.image_url|cut:'images/' }}" alt="{{ auction.title }}">
+    {% endif %}
+    <div class="auction-detail-body">
+      <h1>{{ auction.title }}</h1>
+      {% if auction.featured %}<span class="badge badge-featured">⭐ Featured</span>{% endif %}
+      <p style="color:#888;font-size:0.9rem;">Listed on {{ auction.created_at|date:"F j, Y" }}</p>
+      <div class="bid-label">Current Highest Bid</div>
+      <div class="current-bid-display" id="current-bid-display">${{ auction.current_bid|floatformat:2 }}</div>
+
+      {% if user.is_authenticated %}
+      <form id="bid-form" data-auction-id="{{ auction.pk }}">
+        {% csrf_token %}
+        <div class="bid-form">
+          <input type="number" id="bid-amount" placeholder="Enter bid amount (USD)" min="{{ auction.current_bid }}" step="1" required>
+          <button type="submit">💰 Place Bid</button>
+        </div>
+      </form>
+      {% else %}
+      <div style="background:#fff3cd;padding:1rem;border-radius:8px;border-left:4px solid #ffc107;margin:1rem 0;">
+        <a href="{% url 'login' %}" style="color:#856404;font-weight:bold;">Login or Register</a> to place a bid.
+      </div>
+      {% endif %}
+
+      <div class="bids-history">
+        <h3>📊 Recent Bids</h3>
+        <div class="table-container">
+          <table>
+            <thead><tr><th>Bidder</th><th>Amount</th><th>Time</th></tr></thead>
+            <tbody id="bid-history-body">
+              {% for bid in bids %}
+              <tr>
+                <td>{{ bid.bidder.username }}</td>
+                <td style="color:#ff6600;font-weight:bold;">${{ bid.bid_amount|floatformat:2 }}</td>
+                <td style="color:#888;">{{ bid.created_at|date:"M j, Y g:i a" }}</td>
+              </tr>
+              {% empty %}
+              <tr><td colspan="3" style="text-align:center;color:#888;padding:1rem;">No bids yet. Be the first!</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div style="margin-top:1.5rem;">
+        <a href="{% url 'search' %}" style="color:#ff6600;text-decoration:none;">← Back to All Auctions</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
