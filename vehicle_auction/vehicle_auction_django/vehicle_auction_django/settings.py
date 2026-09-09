@@ -26,7 +26,9 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'cloudinary_storage',
     'django.contrib.staticfiles',
+    'cloudinary',
     'auction',
 ]
 
@@ -89,6 +91,23 @@ STORAGES = {
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# Cloudinary: keeps uploaded images (vehicle photos) permanently, since
+# Render's free disk gets wiped on every redeploy/sleep. Set these three
+# values as environment variables in Render's dashboard.
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.environ.get('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.environ.get('CLOUDINARY_API_SECRET'),
+}
+
+# Only switch media storage to Cloudinary when the credentials are present
+# (e.g. in production on Render). Locally, without them set, media files
+# still save to the local /media folder as before.
+if CLOUDINARY_STORAGE['CLOUD_NAME']:
+    STORAGES['default'] = {
+        'BACKEND': 'cloudinary_storage.storage.MediaCloudinaryStorage',
+    }
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = '/login/'
